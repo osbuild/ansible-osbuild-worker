@@ -1,0 +1,7 @@
+---
+- name: Restart remote worker
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ osbuild_worker_remote_worker_service_name }}{{ osbuild_worker_server_hostname }}"
+    daemon_reload: true
+    state: restarted

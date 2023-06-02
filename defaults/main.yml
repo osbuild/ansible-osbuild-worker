@@ -1,0 +1,99 @@
+---
+# defaults file for osbuild_worker
+
+#################################
+# General configuration options #
+#################################
+
+# The hostname of the osbuild-composer API server.
+# REQUIRED
+osbuild_worker_server_hostname: ""
+# The osbuild-composer server API base path. If empty, the default value is used.
+osbuild_worker_server_api_base_path: ""
+
+# Worker proxy configuration.
+osbuild_worker_proxy_server_hostname: ""
+osbuild_worker_proxy_server_port: 443
+osbuild_worker_no_proxy_domains: []
+
+################################################
+# Worker authentication to the composer server #
+################################################
+
+# The OAuth server URL.
+# REQUIRED
+osbuild_worker_authentication_oauth_url: ""
+# The OAuth client ID.
+# REQUIRED
+osbuild_worker_authentication_client_id: ""
+# Local path to the worker OAuth client secret file. If not empty, this file will be
+# copied to the worker to {{ osbuild_worker_authentication_client_secret_path }}.
+# REQUIRED (if osbuild_worker_authentication_offline_token_file not specified)
+osbuild_worker_authentication_client_secret_file: ""
+# Path to the worker OAuth client secret file on the worker. If empty,
+# defaults to {{ osbuild_worker_authentication_client_secret_path_default }}.
+osbuild_worker_authentication_client_secret_path: ""
+# Local path to the worker OAuth offline token file. If not empty, this file will be
+# copied to the worker to {{ osbuild_worker_authentication_offline_token_path }}.
+# REQUIRED (if osbuild_worker_authentication_client_secret_file not specified)
+osbuild_worker_authentication_offline_token_file: ""
+# Path to the worker OAuth offline token file on the worker. If empty,
+# defaults to {{ osbuild_worker_authentication_offline_token_path_default }}.
+osbuild_worker_authentication_offline_token_path: ""
+
+##########################
+# Configuration for Koji #
+##########################
+
+osbuild_worker_koji_instances: []
+# example:
+# osbuild_worker_koji_instances:
+#   - koji_host: "koji.example.com"
+#     krb_principal: "osbuild-automation@EXAMPLE.COM"
+#     # Local path to the krb keytab file. If not empty, this file will be
+#     # copied to the worker to {{ krb_keytab_path }}.
+#     krb_keytab_file: ""
+#     # Path to the krb keytab file on the worker. If empty, a default path
+#     # under {{ osbuild_worker_config_dir }} with filename
+#     # "client_{{ koji_host }}.keytab" will be used.
+#     krb_keytab_path: ""
+#     relax_timeout_factor: 5
+
+###########################
+# Configuration for Azure #
+###########################
+
+# Local path to the Azure credentials file. If not empty, this file will be
+# copied to the worker to {{ osbuild_worker_azure_credentials_path }}.
+osbuild_worker_azure_credentials_file: ""
+# Path to the Azure credentials file on the worker. If empty,
+# defaults to {{ osbuild_worker_azure_credentials_path_default }}.
+osbuild_worker_azure_credentials_path: ""
+# Number of threads to use when uploading image blob to Azure. If 0, no
+# explicit value is set in the configuration file and the worker will use
+# its internal default. Set to a positive integer to override the default.
+osbuild_worker_azure_upload_threads: 0
+
+#########################
+# Configuration for AWS #
+#########################
+
+# Local path to the AWS credentials file. If not empty, this file will be
+# copied to the worker to {{ osbuild_worker_aws_credentials_path }}.
+osbuild_worker_aws_credentials_file: ""
+# Path to the AWS credentials file on the worker. If empty,
+# defaults to {{ osbuild_worker_aws_credentials_path_default }}.
+osbuild_worker_aws_credentials_path: ""
+osbuild_worker_aws_bucket: ""
+
+#########################
+# Configuration for GCP #
+#########################
+
+# Local path to the GCP credentials file. If not empty, this file will be
+# copied to the worker to {{ osbuild_worker_gcp_credentials_path }}.
+osbuild_worker_gcp_credentials_file: ""
+# Path to the GCP credentials file on the worker. If empty,
+# defaults to {{ osbuild_worker_gcp_credentials_path_default }}.
+osbuild_worker_gcp_credentials_path: ""
+osbuild_worker_gcp_bucket: ""

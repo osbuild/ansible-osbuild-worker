@@ -1,0 +1,23 @@
+---
+# vars file for osbuild_worker
+
+osbuild_worker_config_dir: /etc/osbuild-worker
+osbuild_worker_config_dir_mode: '0755'
+
+osbuild_worker_config_file: "{{ osbuild_worker_config_dir }}/osbuild-worker.toml"
+osbuild_worker_config_file_mode: '0644'
+
+osbuild_worker_remote_worker_service_name: osbuild-remote-worker@
+osbuild_worker_remote_worker_service_dropin_dir: /etc/systemd/system/{{ osbuild_worker_remote_worker_service_name }}.service.d
+osbuild_worker_remote_worker_service_proxy_dropin_file: "{{ osbuild_worker_remote_worker_service_dropin_dir }}/proxy.conf"
+
+osbuild_worker_secrets_owner: root
+osbuild_worker_secrets_group: root
+osbuild_worker_secrets_mode: '0400'
+
+osbuild_worker_authentication_client_secret_path_default: "{{ osbuild_worker_config_dir }}/client_secret"
+osbuild_worker_authentication_offline_token_path_default: "{{ osbuild_worker_config_dir }}/offline_token"
+
+osbuild_worker_azure_credentials_path_default: "{{ osbuild_worker_config_dir }}/azure-credentials"
+osbuild_worker_aws_credentials_path_default: "{{ osbuild_worker_config_dir }}/aws-credentials"
+osbuild_worker_gcp_credentials_path_default: "{{ osbuild_worker_config_dir }}/gcp-credentials"

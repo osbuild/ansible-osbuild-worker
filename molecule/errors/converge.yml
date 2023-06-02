@@ -1,0 +1,450 @@
+---
+- name: Converge
+  hosts: all
+
+  tasks:
+    - name: Include common variables
+      ansible.builtin.include_vars:
+        file: defaults/main.yml
+
+    - name: Test not providing required variables
+      block:
+        - name: Test not providing osbuild_worker_server_hostname
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_authentication_client_secret_file: "{{ test_osbuild_worker_authentication_client_secret_file }}"
+              register: _block1_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block1_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block1_should_have_run is defined
+                  - _block1_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test not providing osbuild_worker_authentication_oauth_url
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_authentication_client_secret_file: "{{ test_osbuild_worker_authentication_client_secret_file }}"
+              register: _block2_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block2_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block2_should_have_run is defined
+                  - _block2_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test not providing osbuild_worker_authentication_client_id
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_secret_file: "{{ test_osbuild_worker_authentication_client_secret_file }}"
+              register: _block3_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block3_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block3_should_have_run is defined
+                  - _block3_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test not providing neither of osbuild_worker_authentication_client_secret_file and osbuild_worker_authentication_offline_token_file
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+              register: _block4_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block4_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block4_should_have_run is defined
+                  - _block4_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+    - name: Test not setting osbuild_worker_authentication_client_secret_file and setting osbuild_worker_authentication_client_secret_path
+      block:
+        - name: Include ansible-osbuild-worker role
+          ansible.builtin.include_role:
+            name: "ansible-osbuild-worker"
+          vars:
+            osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+            osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+            osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+            osbuild_worker_authentication_client_secret_path: "/tmp/file"
+          register: _block5_should_have_run
+
+        - name: Fail if we get here
+          ansible.builtin.fail:
+            msg: "Should have failed because we didn't provide required variables"
+          register: _block5_should_not_have_run
+      rescue:
+        - name: Check if there was an expected error
+          ansible.builtin.assert:
+            quiet: true
+            that:
+              - _block5_should_have_run is defined
+              - _block5_should_not_have_run is not defined
+            fail_msg: "Expected error did not occur"
+
+    - name: Test not setting osbuild_worker_authentication_offline_token_file and setting osbuild_worker_authentication_offline_token_path
+      block:
+        - name: Include ansible-osbuild-worker role
+          ansible.builtin.include_role:
+            name: "ansible-osbuild-worker"
+          vars:
+            osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+            osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+            osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+            osbuild_worker_authentication_offline_token_path: "/tmp/file"
+          register: _block6_should_have_run
+
+        - name: Fail if we get here
+          ansible.builtin.fail:
+            msg: "Should have failed because we didn't provide required variables"
+          register: _block6_should_not_have_run
+      rescue:
+        - name: Check if there was an expected error
+          ansible.builtin.assert:
+            quiet: true
+            that:
+              - _block6_should_have_run is defined
+              - _block6_should_not_have_run is not defined
+            fail_msg: "Expected error did not occur"
+
+    - name: Test Koji integration variables
+      block:
+        - name: Test not setting koji_host
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_koji_instances:
+                  - koji_host: ""
+              register: _block7_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block7_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block7_should_have_run is defined
+                  - _block7_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test not setting krb_principal
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_koji_instances:
+                  - koji_host: "koji.example.com"
+                    krb_principal: ""
+              register: _block8_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block8_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block8_should_have_run is defined
+                  - _block8_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test not setting krb_keytab_file
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_koji_instances:
+                  - koji_host: "koji.example.com"
+                    krb_principal: "osbuild-automation@EXAMPLE.COM"
+                    krb_keytab_file: ""
+              register: _block9_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block9_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block9_should_have_run is defined
+                  - _block9_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test setting negative relax_timeout_factor value
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_koji_instances:
+                  - koji_host: "koji.example.com"
+                    krb_principal: "osbuild-automation@EXAMPLE.COM"
+                    krb_keytab_file: "file"
+                    relax_timeout_factor: -1
+              register: _block10_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block10_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block10_should_have_run is defined
+                  - _block10_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+    - name: Test not setting required Azure variables
+      block:
+        - name: Test not setting osbuild_worker_azure_credentials_file and setting osbuild_worker_azure_credentials_path
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_azure_credentials_path: "/tmp/file"
+              register: _block11_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block11_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block11_should_have_run is defined
+                  - _block11_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test not setting osbuild_worker_azure_credentials_file and setting osbuild_worker_azure_upload_threads
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_azure_upload_threads: 16
+              register: _block12_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block12_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block12_should_have_run is defined
+                  - _block12_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test setting osbuild_worker_azure_upload_threads to a negative value
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_azure_credentials_file: "file"
+                osbuild_worker_azure_upload_threads: -1
+              register: _block13_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block13_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block13_should_have_run is defined
+                  - _block13_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+    - name: Test not setting required AWS variables
+      block:
+        - name: Test not setting osbuild_worker_aws_credentials_file and setting osbuild_worker_aws_credentials_path
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_aws_credentials_path: "/tmp/file"
+              register: _block14_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block14_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block14_should_have_run is defined
+                  - _block14_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test not setting osbuild_worker_aws_credentials_file and setting osbuild_worker_aws_bucket
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_aws_bucket: "bucket"
+              register: _block15_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block15_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block15_should_have_run is defined
+                  - _block15_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+    - name: Test not setting required GCP variables
+      block:
+        - name: Test not setting osbuild_worker_gcp_credentials_file and setting osbuild_worker_gcp_credentials_path
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_gcp_credentials_path: "/tmp/file"
+              register: _block16_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block16_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block16_should_have_run is defined
+                  - _block16_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"
+
+        - name: Test not setting osbuild_worker_gcp_credentials_file and setting osbuild_worker_gcp_bucket
+          block:
+            - name: Include ansible-osbuild-worker role
+              ansible.builtin.include_role:
+                name: "ansible-osbuild-worker"
+              vars:
+                osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
+                osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
+                osbuild_worker_authentication_client_id: "{{ test_osbuild_worker_authentication_client_id }}"
+                osbuild_worker_gcp_bucket: "bucket"
+              register: _block17_should_have_run
+
+            - name: Fail if we get here
+              ansible.builtin.fail:
+                msg: "Should have failed because we didn't provide required variables"
+              register: _block17_should_not_have_run
+          rescue:
+            - name: Check if there was an expected error
+              ansible.builtin.assert:
+                quiet: true
+                that:
+                  - _block17_should_have_run is defined
+                  - _block17_should_not_have_run is not defined
+                fail_msg: "Expected error did not occur"

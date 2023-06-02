@@ -1,0 +1,11 @@
+---
+# tasks for osbuild_worker role
+
+- name: Validate set role variables
+  ansible.builtin.include_tasks: tasks/vars_validate.yml
+
+- name: Define unset role variables
+  ansible.builtin.include_tasks: tasks/vars_define.yml
+
+- name: Install and configure osbuild-composer worker
+  ansible.builtin.include_tasks: tasks/deploy_worker.yml
