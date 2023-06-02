@@ -1,0 +1,61 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  ansible-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: "${{ github.repository }}"
+
+      - name: Run ansible-lint
+        uses: ansible-community/ansible-lint-action@main
+        with:
+          path: "${{ github.repository }}"
+
+  test:
+    needs:
+      - ansible-lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - name: "centos"
+            namespace: "quay.io/centos"
+            tag: "stream8"
+          - name: "centos"
+            namespace: "quay.io/centos"
+            tag: "stream9"
+          - name: "fedora"
+            namespace: "quay.io/fedora"
+            tag: "latest"
+        scenario:
+          - default
+          - auto_reboot
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          path: "${{ github.repository }}"
+
+      - name: molecule
+        uses: robertdebock/molecule-action@4.0.9
+        with:
+          path: "${{ github.repository }}"
+          image: "${{ matrix.image.name }}"
+          namespace: "${{ matrix.image.namespace }}"
+          tag: "${{ matrix.image.tag }}"
+          scenario: "${{ matrix.scenario }}"
+          options: parallel
