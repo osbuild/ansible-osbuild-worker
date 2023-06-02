@@ -1,0 +1,97 @@
+---
+# tasks to deploy osbuild worker
+- name: Install osbuild-composer-worker
+  become: true
+  ansible.builtin.dnf:
+    name:
+      - osbuild-composer-worker
+    state: installed
+    update_cache: true
+
+- name: Create worker configuration directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ osbuild_worker_config_dir }}"
+    state: directory
+    mode: "{{ osbuild_worker_config_dir_mode }}"
+
+- name: Copy secrets to the worker
+  become: true
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ osbuild_worker_secrets_owner }}"
+    group: "{{ osbuild_worker_secrets_group }}"
+    mode: "{{ osbuild_worker_secrets_mode }}"
+  loop:
+    - { src: "{{ osbuild_worker_authentication_client_secret_file }}", dest: "{{ osbuild_worker_authentication_client_secret_path }}" }
+    - { src: "{{ osbuild_worker_authentication_offline_token_file }}", dest: "{{ osbuild_worker_authentication_offline_token_path }}" }
+    - { src: "{{ osbuild_worker_azure_credentials_file }}", dest: "{{ osbuild_worker_azure_credentials_path }}" }
+    - { src: "{{ osbuild_worker_aws_credentials_file }}", dest: "{{ osbuild_worker_aws_credentials_path }}" }
+    - { src: "{{ osbuild_worker_gcp_credentials_file }}", dest: "{{ osbuild_worker_gcp_credentials_path }}" }
+  when: item.src | length > 0 and item.dest | length > 0
+  notify: Restart remote worker
+
+- name: Copy Koji keytabs to the worker
+  become: true
+  ansible.builtin.copy:
+    src: "{{ item.krb_keytab_file }}"
+    dest: "{{ item.krb_keytab_path }}"
+    owner: "{{ osbuild_worker_secrets_owner }}"
+    group: "{{ osbuild_worker_secrets_group }}"
+    mode: "{{ osbuild_worker_secrets_mode }}"
+  loop: "{{ _osbuild_worker_koji_instances }}"
+  when: _osbuild_worker_koji_instances is defined and _osbuild_worker_koji_instances | length > 0
+  notify: Restart remote worker
+
+- name: Configure osbuild-remote-worker to use proxy
+  when: osbuild_worker_proxy_server_hostname | length > 0
+  become: true
+  block:
+    - name: Create drop-in directory for osbuild-remote-worker service
+      ansible.builtin.file:
+        path: "{{ osbuild_worker_remote_worker_service_dropin_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Configure osbuild-remote-worker to use proxy using drop-in
+      ansible.builtin.template:
+        src: templates/osbuild-remote-worker-proxy.conf.j2
+        dest: "{{ osbuild_worker_remote_worker_service_proxy_dropin_file }}"
+        mode: '0644'
+      notify: Restart remote worker
+
+- name: Copy osbuild-worker configuration file
+  become: true
+  ansible.builtin.template:
+    src: templates/osbuild-worker.toml.j2
+    dest: "{{ osbuild_worker_config_file }}"
+    mode: "{{ osbuild_worker_config_file_mode }}"
+  notify: Restart remote worker
+
+- name: Stop any unwanted osbuild-remote-worker services
+  become: true
+  block:
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+
+    - name: Filter any unwanted osbuild-remote-worker services
+      ansible.builtin.set_fact:
+        osbuild_remote_worker_services_unwanted: "{{ ansible_facts.services | list | select('regex', '^osbuild-remote-worker@.+.service$')
+          | difference([_osbuild_remote_worker_service_wanted]) }}"
+      vars:
+        _osbuild_remote_worker_service_wanted: "{{ osbuild_worker_remote_worker_service_name }}{{ osbuild_worker_server_hostname }}.service"
+
+    - name: Stop and disable any running osbuild-remote-worker service for a different server
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+      loop: "{{ osbuild_remote_worker_services_unwanted }}"
+
+- name: Start and enable osbuild-remote-worker service
+  become: true
+  ansible.builtin.service:
+    name: "{{ osbuild_worker_remote_worker_service_name }}{{ osbuild_worker_server_hostname }}.service"
+    state: started
+    enabled: true

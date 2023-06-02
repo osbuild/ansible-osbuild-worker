@@ -1,0 +1,10 @@
+---
+# common variables for AWS extended test
+test_osbuild_worker_server_hostname: "composer.example.com"
+test_osbuild_worker_authentication_oauth_url: "https://oauth.example.com"
+test_osbuild_worker_authentication_client_id: "test-client"
+test_osbuild_worker_authentication_client_secret_file: "client_secret"
+
+test_osbuild_worker_aws_credentials_file: "aws_credentials"
+test_osbuild_worker_aws_credentials_path: "/etc/osbuild-worker/custom-aws-credentials-path"
+test_osbuild_worker_aws_bucket: "aws-bucket-name"

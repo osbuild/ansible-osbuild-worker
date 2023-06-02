@@ -1,0 +1,6 @@
+[Service]
+Environment="http_proxy={{ osbuild_worker_proxy_server_hostname }}:{{ osbuild_worker_proxy_server_port }}"
+Environment="https_proxy={{ osbuild_worker_proxy_server_hostname }}:{{ osbuild_worker_proxy_server_port }}"
+{% if osbuild_worker_no_proxy_domains is defined and osbuild_worker_no_proxy_domains | length > 0 %}
+Environment="no_proxy={{ osbuild_worker_no_proxy_domains | join(',') }}"
+{% endif %}

@@ -1,0 +1,23 @@
+galaxy_info:
+  role_name: osbuild_worker
+  namespace: osbuild
+  author: Tomáš Hozza
+  description: Ansible role for deploying osbuild-composer worker
+  company: Red Hat
+  issue_tracker_url: https://github.com/osbuild/ansible-osbuild-worker/issues
+  license: Apache-2.0
+  min_ansible_version: "2.1"
+  platforms:
+    - name: Fedora
+      versions:
+        - all
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+  galaxy_tags:
+    - "osbuild"
+    - "composer"
+    - "worker"
+
+dependencies: []

@@ -1,0 +1,36 @@
+---
+# tasks to define potentially missing variables
+
+- name: Define worker Oauth client secret path if not defined
+  ansible.builtin.set_fact:
+    osbuild_worker_authentication_client_secret_path: "{{ osbuild_worker_authentication_client_secret_path_default }}"
+  when: osbuild_worker_authentication_client_secret_file | length > 0 and osbuild_worker_authentication_client_secret_path | length == 0
+
+- name: Define worker Oauth offline token path if not defined
+  ansible.builtin.set_fact:
+    osbuild_worker_authentication_offline_token_path: "{{ osbuild_worker_authentication_offline_token_path_default }}"
+  when: osbuild_worker_authentication_offline_token_file | length > 0 and osbuild_worker_authentication_offline_token_path | length == 0
+
+- name: Define Azure credentials path on worker if not defined
+  ansible.builtin.set_fact:
+    osbuild_worker_azure_credentials_path: "{{ osbuild_worker_azure_credentials_path_default }}"
+  when: osbuild_worker_azure_credentials_file | length > 0 and osbuild_worker_azure_credentials_path | length == 0
+
+- name: Define AWS credentials path on worker if not defined
+  ansible.builtin.set_fact:
+    osbuild_worker_aws_credentials_path: "{{ osbuild_worker_aws_credentials_path_default }}"
+  when: osbuild_worker_aws_credentials_file | length > 0 and osbuild_worker_aws_credentials_path | length == 0
+
+- name: Define GCP credentials path on worker if not defined
+  ansible.builtin.set_fact:
+    osbuild_worker_gcp_credentials_path: "{{ osbuild_worker_gcp_credentials_path_default }}"
+  when: osbuild_worker_gcp_credentials_file | length > 0 and osbuild_worker_gcp_credentials_path | length == 0
+
+- name: Ensure that Koji keytab paths on worker are defined
+  ansible.builtin.set_fact:
+    _osbuild_worker_koji_instances: "{{ (_osbuild_worker_koji_instances | default([])) + [_item] }}"
+  vars:
+    _krb_keytab_path: "{{ (item.krb_keytab_path is not defined or item.krb_keytab_path | length == 0) | \
+      ternary(osbuild_worker_config_dir + '/client_' + item.koji_host + '.keytab', item.krb_keytab_path) }}"
+    _item: "{{ item | combine({'krb_keytab_path': _krb_keytab_path}) }}"
+  loop: "{{ osbuild_worker_koji_instances }}"

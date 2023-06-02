@@ -1,0 +1,52 @@
+# {{ ansible_managed }}
+
+{% if osbuild_worker_server_api_base_path %}
+base_path = "{{ osbuild_worker_server_api_base_path }}"
+
+{% endif %}
+[authentication]
+oauth_url = "{{ osbuild_worker_authentication_oauth_url }}"
+client_id = "{{ osbuild_worker_authentication_client_id }}"
+{% if osbuild_worker_authentication_client_secret_path %}
+client_secret = "{{ osbuild_worker_authentication_client_secret_path }}"
+{% endif %}
+{%if osbuild_worker_authentication_offline_token_path %}
+offline_token = "{{ osbuild_worker_authentication_offline_token_path }}"
+{% endif %}
+
+{% if _osbuild_worker_koji_instances is defined %}
+{% for koji_instance in _osbuild_worker_koji_instances %}
+{% if koji_instance.relax_timeout_factor is defined %}
+[koji."{{ koji_instance.koji_host }}"]
+relax_timeout_factor = {{ koji_instance.relax_timeout_factor }}
+
+{% endif %}
+[koji."{{ koji_instance.koji_host }}".kerberos]
+principal = "{{ koji_instance.krb_principal }}"
+keytab = "{{ koji_instance.krb_keytab_path }}"
+
+{% endfor %}
+{% endif %}
+{% if osbuild_worker_azure_credentials_path is defined and osbuild_worker_azure_credentials_path %}
+[azure]
+credentials = "{{ osbuild_worker_azure_credentials_path }}"
+{% if osbuild_worker_azure_upload_threads is defined %}
+upload_threads = {{ osbuild_worker_azure_upload_threads }}
+{% endif %}
+
+{% endif %}
+{% if osbuild_worker_aws_credentials_path is defined and osbuild_worker_aws_credentials_path %}
+[aws]
+credentials = "{{ osbuild_worker_aws_credentials_path }}"
+{% if osbuild_worker_aws_bucket is defined %}
+bucket = "{{ osbuild_worker_aws_bucket }}"
+{% endif %}
+
+{% endif %}
+{% if osbuild_worker_gcp_credentials_path is defined and osbuild_worker_gcp_credentials_path %}
+[gcp]
+credentials = "{{ osbuild_worker_gcp_credentials_path }}"
+{% if osbuild_worker_gcp_bucket is defined %}
+bucket = "{{ osbuild_worker_gcp_bucket }}"
+{% endif %}
+{% endif %}

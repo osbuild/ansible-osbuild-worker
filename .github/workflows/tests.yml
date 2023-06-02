@@ -41,8 +41,23 @@ jobs:
             namespace: "quay.io/fedora"
             tag: "latest"
         scenario:
+          - aws
+          - aws-extended
+          - azure
+          - azure-extended
           - default
-          - auto_reboot
+          - default-extended
+          - errors
+          - gcp
+          - gcp-extended
+          - koji
+          - proxy
+    container:
+      image: "quay.io/fedora/fedora:latest"
+      # --cgroupns=host needed due to https://github.com/containers/podman/discussions/12898#discussioncomment-4078154
+      options: "--privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host"
+      env:
+        HOME: "/root"
 
     steps:
       - name: checkout
@@ -50,12 +65,29 @@ jobs:
         with:
           path: "${{ github.repository }}"
 
-      - name: molecule
-        uses: robertdebock/molecule-action@4.0.9
-        with:
-          path: "${{ github.repository }}"
-          image: "${{ matrix.image.name }}"
-          namespace: "${{ matrix.image.namespace }}"
-          tag: "${{ matrix.image.tag }}"
-          scenario: "${{ matrix.scenario }}"
-          options: parallel
+      - name: install dependencies
+        # need to pick specific version of ansible-compat due to
+        # https://github.com/ansible-community/molecule/issues/3903
+        run: |
+          dnf install -y podman \
+            rsync \
+            which \
+            python3-molecule \
+            python3-click-help-colors \
+            python3-rich \
+            python3-enrich \
+            python3-pluggy \
+            python3-cookiecutter \
+            python3-ansible-compat-3.0.1
+
+      - name: run molecule
+        run: |
+          export HOME="/root"
+          export image="${{ matrix.image.name }}"
+          export namespace="${{ matrix.image.namespace }}"
+          export tag="${{ matrix.image.tag }}"
+          export PY_COLORS=1
+          export ANSIBLE_FORCE_COLOR=1
+          export MOLECULE_NO_LOG="false"
+          molecule test -d podman -s "${{ matrix.scenario }}"
+        working-directory: "${{ github.repository }}"
