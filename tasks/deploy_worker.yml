@@ -89,6 +89,9 @@
         enabled: false
       loop: "{{ osbuild_remote_worker_services_unwanted }}"
 
+- name: Trigger handlers
+  ansible.builtin.meta: flush_handlers
+
 - name: Start and enable osbuild-remote-worker service
   become: true
   ansible.builtin.service:
