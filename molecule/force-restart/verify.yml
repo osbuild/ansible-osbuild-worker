@@ -1,0 +1,28 @@
+---
+- name: Verify force-restart scenario
+  hosts: all
+  gather_facts: true
+  become: true
+  vars:
+    osbuild_worker_remote_worker_service_name: "osbuild-remote-worker@{{ test_osbuild_worker_server_hostname }}.service"
+
+  tasks:
+    - name: Include common variables
+      ansible.builtin.include_vars:
+        file: defaults/main.yml
+
+    - name: Get journal log for worker service
+      ansible.builtin.command: journalctl -u "{{ osbuild_worker_remote_worker_service_name }}" --no-pager
+      changed_when: false
+      register: osbuild_remote_worker_service_journal
+
+    - name: Count how many times osbuild remote worker service was started
+      ansible.builtin.set_fact:
+        osbuild_remote_worker_service_starts: "{{ osbuild_remote_worker_service_journal.stdout_lines | \
+          select('search', 'Started ') | list | count }}"
+
+    - name: Check that osbuild remote worker service was restarted
+      ansible.builtin.assert:
+        that:
+          - osbuild_remote_worker_service_starts | int == 2
+        fail_msg: "osbuild remote worker service was not restarted"

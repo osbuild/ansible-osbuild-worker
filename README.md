@@ -29,6 +29,8 @@ Variables that the user can set are listed and explained below:
 osbuild_worker_server_hostname: ""
 # The osbuild-composer server API base path. If empty, the default value is used.
 osbuild_worker_server_api_base_path: ""
+# Force the restart of the worker service even if the configuration has not changed.
+osbuild_worker_force_restart: false
 
 # Worker proxy configuration.
 osbuild_worker_proxy_server_hostname: ""
