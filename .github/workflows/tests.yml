@@ -48,6 +48,7 @@ jobs:
           - default
           - default-extended
           - errors
+          - force-restart
           - gcp
           - gcp-extended
           - koji

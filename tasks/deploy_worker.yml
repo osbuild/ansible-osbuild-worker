@@ -89,6 +89,13 @@
         enabled: false
       loop: "{{ osbuild_remote_worker_services_unwanted }}"
 
+- name: Notify remote worker restart handler on force restart
+  ansible.builtin.debug:
+    msg: "Notifying remote worker restart handler"
+  changed_when: osbuild_worker_force_restart
+  notify: Restart remote worker
+  when: osbuild_worker_force_restart
+
 - name: Trigger handlers
   ansible.builtin.meta: flush_handlers
 
