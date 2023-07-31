@@ -19,7 +19,8 @@ jobs:
           path: "${{ github.repository }}"
 
       - name: Run ansible-lint
-        uses: ansible-community/ansible-lint-action@main
+        # https://github.com/ansible/ansible-lint-action/issues/178
+        uses: ansible-community/ansible-lint-action@v6.16.0
         with:
           path: "${{ github.repository }}"
 
