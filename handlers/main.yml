@@ -5,3 +5,5 @@
     name: "{{ osbuild_worker_remote_worker_service_name }}{{ osbuild_worker_server_hostname }}"
     daemon_reload: true
     state: restarted
+  # The role may be run on a fresh system in check mode which would result in failure.
+  ignore_errors: "{{ ansible_check_mode }}"

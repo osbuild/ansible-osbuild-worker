@@ -1,0 +1,36 @@
+---
+role_name_check: 1
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: "osbuild-worker-${image:-fedora}-${tag:-latest}"
+    image: "${namespace:-quay.io/fedora}/${image:-fedora}:${tag:-latest}"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    pre_build_image: false
+    privileged: true
+provisioner:
+  name: ansible
+  options:
+    check: true
+verifier:
+  name: ansible
+scenario:
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    # this scenario is not idempotent due to the force restart and check mode
+    # - idempotence
+    - side_effect
+    # use the verify.yml from the errors scenario, since the role should not have any effect
+    - verify ../errors/verify.yml
+    - cleanup
+    - destroy
