@@ -1,0 +1,36 @@
+---
+role_name_check: 1
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: "osbuild-worker-${image:-fedora}-${tag:-latest}"
+    image: "${namespace:-quay.io/fedora}/${image:-fedora}:${tag:-latest}"
+    command: /sbin/init
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    pre_build_image: false
+    privileged: true
+provisioner:
+  name: ansible
+  playbooks:
+    prepare: ../default/converge.yml
+verifier:
+  name: ansible
+scenario:
+  test_sequence:
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    # verify that the system is in the correct state before running the test case
+    - verify ../default/verify.yml
+    # now run the actual test case on already configured worker
+    - converge
+    - idempotence
+    - verify
+    - cleanup
+    - destroy

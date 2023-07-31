@@ -1,0 +1,6 @@
+---
+# common variables for restart-on-config-change test
+test_osbuild_worker_server_hostname: "composer.example.com"
+test_osbuild_worker_authentication_oauth_url: "https://oauth.example.com"
+test_osbuild_worker_authentication_client_id: "test-client-changed"
+test_osbuild_worker_authentication_client_secret_file: "client_secret"
