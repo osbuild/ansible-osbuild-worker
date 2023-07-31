@@ -4,8 +4,10 @@
   gather_facts: true
   become: true
   vars:
-    osbuild_worker_remote_worker_service_name: osbuild-remote-worker@
-    test_systemd_dropin_dir: /etc/systemd/system/{{ osbuild_worker_remote_worker_service_name }}.service.d
+    osbuild_worker_remote_worker_service_template_name: "osbuild-remote-worker@"
+    osbuild_worker_remote_worker_service_name:
+      "{{ osbuild_worker_remote_worker_service_template_name }}{{ test_osbuild_worker_server_hostname }}.service"
+    test_systemd_dropin_dir: /etc/systemd/system/{{ osbuild_worker_remote_worker_service_template_name }}.service.d
     test_systemd_dropin_file: "{{ test_systemd_dropin_dir }}/proxy.conf"
     test_systemd_dropin_file_mode: '0644'
 
@@ -25,7 +27,7 @@
 
     - name: Check status of osbuild remote worker service
       ansible.builtin.systemd:
-        name: "{{ osbuild_worker_remote_worker_service_name }}{{ test_osbuild_worker_server_hostname }}"
+        name: "{{ osbuild_worker_remote_worker_service_name }}"
       register: osbuild_remote_worker_service
 
     - name: Check that osbuild remote worker service is enabled and started

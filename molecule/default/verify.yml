@@ -8,7 +8,7 @@
     osbuild_worker_config_dir_mode: '0755'
     osbuild_worker_config_file: "{{ osbuild_worker_config_dir }}/osbuild-worker.toml"
     osbuild_worker_config_file_mode: '0644'
-    osbuild_worker_remote_worker_service_name: osbuild-remote-worker@
+    osbuild_worker_remote_worker_service_name: "osbuild-remote-worker@{{ test_osbuild_worker_server_hostname }}.service"
     osbuild_worker_secrets_mode: '0400'
 
   tasks:
@@ -51,7 +51,7 @@
 
     - name: Check status of osbuild remote worker service
       ansible.builtin.systemd:
-        name: "{{ osbuild_worker_remote_worker_service_name }}{{ test_osbuild_worker_server_hostname }}"
+        name: "{{ osbuild_worker_remote_worker_service_name }}"
       register: osbuild_remote_worker_service
 
     - name: Check that osbuild remote worker service is enabled and started
