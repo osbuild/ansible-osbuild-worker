@@ -81,6 +81,7 @@
       vars:
         auth_config_part: |-
           base_path = "{{ test_osbuild_worker_base_path }}"
+          deployment_channel = "{{ test_worker_deployment_channel }}"
 
           [authentication]
           oauth_url = "{{ test_osbuild_worker_authentication_oauth_url }}"

@@ -18,6 +18,12 @@ osbuild_worker_proxy_server_hostname: ""
 osbuild_worker_proxy_server_port: 443
 osbuild_worker_no_proxy_domains: []
 
+# Logging configuration
+# additional information to be logged where the instance is deployed
+# you should override with "staging", "production" or similar
+# defaults to {{ osbuild_worker_deployment_channel_default }}
+osbuild_worker_deployment_channel: ""
+
 ################################################
 # Worker authentication to the composer server #
 ################################################
