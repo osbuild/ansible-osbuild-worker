@@ -34,9 +34,6 @@ jobs:
         image:
           - name: "centos"
             namespace: "quay.io/centos"
-            tag: "stream8"
-          - name: "centos"
-            namespace: "quay.io/centos"
             tag: "stream9"
           - name: "fedora"
             namespace: "quay.io/fedora"
