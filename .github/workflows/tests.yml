@@ -76,13 +76,22 @@ jobs:
           dnf install -y podman \
             rsync \
             which \
-            python3-molecule \
             python3-click-help-colors \
             python3-rich \
             python3-enrich \
             python3-pluggy \
             python3-cookiecutter \
-            python3-ansible-compat-3.0.1
+            python3-pip
+          pip install molecule molecule-podman ansible
+
+      - name: change podman storage driver
+        # this is needed as here actually podman is running inside docker (the GH-action)
+        run: |
+          sudo mkdir -p /etc/containers
+          echo -e "[storage]\ndriver = \"vfs\"
+          runroot = \"/run/containers/storage\"
+          graphroot = \"/var/lib/containers/storage\"
+          " | sudo tee -a /etc/containers/storage.conf
 
       - name: run molecule
         run: |
