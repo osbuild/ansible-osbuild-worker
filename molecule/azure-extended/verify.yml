@@ -12,63 +12,79 @@
     osbuild_worker_secrets_mode: '0400'
 
   tasks:
-    - name: Include common variables
-      ansible.builtin.include_vars:
-        file: defaults/main.yml
+    - name: Run tests and capture failure logs
+      block:
+        - name: Include common variables
+          ansible.builtin.include_vars:
+            file: defaults/main.yml
 
-    - name: Gather package facts
-      ansible.builtin.package_facts:
-        manager: auto
+        - name: Gather package facts
+          ansible.builtin.package_facts:
+            manager: auto
 
-    - name: Check that osbuild-composer-worker is installed
-      ansible.builtin.assert:
-        that:
-          - ansible_facts.packages['osbuild-composer-worker'] is defined
+        - name: Check that osbuild-composer-worker is installed
+          ansible.builtin.assert:
+            that:
+              - ansible_facts.packages['osbuild-composer-worker'] is defined
 
-    - name: Check status of osbuild remote worker service
-      ansible.builtin.systemd:
-        name: "{{ osbuild_worker_remote_worker_service_name }}"
-      register: osbuild_remote_worker_service
+        - name: Check status of osbuild remote worker service
+          ansible.builtin.systemd:
+            name: "{{ osbuild_worker_remote_worker_service_name }}"
+          register: osbuild_remote_worker_service
 
-    - name: Check that osbuild remote worker service is enabled and started
-      ansible.builtin.assert:
-        that:
-          - osbuild_remote_worker_service.status['LoadState'] == 'loaded'
-          - osbuild_remote_worker_service.status['ActiveState'] == 'active'
-          - osbuild_remote_worker_service.status['UnitFileState'] == 'enabled'
+        - name: Check that osbuild remote worker service is enabled and started
+          ansible.builtin.assert:
+            that:
+              - osbuild_remote_worker_service.status['LoadState'] == 'loaded'
+              - osbuild_remote_worker_service.status['ActiveState'] == 'active'
+              - osbuild_remote_worker_service.status['UnitFileState'] == 'enabled'
 
-    - name: Fetch the content of osbuild worker config file (Base64 encoded)
-      ansible.builtin.slurp:
-        src: "{{ osbuild_worker_config_file }}"
-      register: osbuild_worker_config_file_content_encoded
+        - name: Fetch the content of osbuild worker config file (Base64 encoded)
+          ansible.builtin.slurp:
+            src: "{{ osbuild_worker_config_file }}"
+          register: osbuild_worker_config_file_content_encoded
 
-    - name: Register (raw) content of osbuild worker config file as a variable
-      ansible.builtin.set_fact:
-        osbuild_worker_config_file_content: "{{ osbuild_worker_config_file_content_encoded.content | b64decode }}"
+        - name: Register (raw) content of osbuild worker config file as a variable
+          ansible.builtin.set_fact:
+            osbuild_worker_config_file_content: "{{ osbuild_worker_config_file_content_encoded.content | b64decode }}"
 
-    - name: Check Azure configuration in the worker config file
-      ansible.builtin.assert:
-        that:
-          - azure_config_part in osbuild_worker_config_file_content
-          - osbuild_worker_config_file_content is not match(".*base_path = .*")
-          - osbuild_worker_config_file_content is not match(".*offline_token = .*")
-          - osbuild_worker_config_file_content is not match(".*\[aws\].*")
-          - osbuild_worker_config_file_content is not match(".*\[gcp\].*")
-          - osbuild_worker_config_file_content is not match(".*\[koji.+\].*")
-      vars:
-        azure_config_part: |-
-          [azure]
-          credentials = "{{ test_osbuild_worker_azure_credentials_path }}"
-          upload_threads = {{ test_osbuild_worker_azure_upload_threads }}
+        - name: Check Azure configuration in the worker config file
+          ansible.builtin.assert:
+            that:
+              - azure_config_part in osbuild_worker_config_file_content
+              - osbuild_worker_config_file_content is not match(".*base_path = .*")
+              - osbuild_worker_config_file_content is not match(".*offline_token = .*")
+              - osbuild_worker_config_file_content is not match(".*\[aws\].*")
+              - osbuild_worker_config_file_content is not match(".*\[gcp\].*")
+              - osbuild_worker_config_file_content is not match(".*\[koji.+\].*")
+          vars:
+            azure_config_part: |-
+              [azure]
+              credentials = "{{ test_osbuild_worker_azure_credentials_path }}"
+              upload_threads = {{ test_osbuild_worker_azure_upload_threads }}
 
-    - name: Stat Azure credentials file
-      ansible.builtin.stat:
-        path: "{{ test_osbuild_worker_azure_credentials_path }}"
-      register: azure_credentials_file_stat
+        - name: Stat Azure credentials file
+          ansible.builtin.stat:
+            path: "{{ test_osbuild_worker_azure_credentials_path }}"
+          register: azure_credentials_file_stat
 
-    - name: Check that Azure credentials file exists on the remote host
-      ansible.builtin.assert:
-        that:
-          - azure_credentials_file_stat.stat.exists
-          - azure_credentials_file_stat.stat.isreg
-          - azure_credentials_file_stat.stat.mode == osbuild_worker_secrets_mode
+        - name: Check that Azure credentials file exists on the remote host
+          ansible.builtin.assert:
+            that:
+              - azure_credentials_file_stat.stat.exists
+              - azure_credentials_file_stat.stat.isreg
+              - azure_credentials_file_stat.stat.mode == osbuild_worker_secrets_mode
+      rescue:
+        - name: Retrieve logs on failure
+          ansible.builtin.shell: |
+            {% raw %}
+            journalctl
+            {% endraw %}
+          changed_when: false
+          register: logfile_cmd
+
+        - name: Display logs
+          ansible.builtin.fail:
+            msg: |
+              {{ logfile_cmd.stdout }}
+              {{ logfile_cmd.stderr }}

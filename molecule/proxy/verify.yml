@@ -12,61 +12,77 @@
     test_systemd_dropin_file_mode: '0644'
 
   tasks:
-    - name: Include common variables
-      ansible.builtin.include_vars:
-        file: defaults/main.yml
+    - name: Run tests and capture failure logs
+      block:
+        - name: Include common variables
+          ansible.builtin.include_vars:
+            file: defaults/main.yml
 
-    - name: Gather package facts
-      ansible.builtin.package_facts:
-        manager: auto
+        - name: Gather package facts
+          ansible.builtin.package_facts:
+            manager: auto
 
-    - name: Check that osbuild-composer-worker is installed
-      ansible.builtin.assert:
-        that:
-          - ansible_facts.packages['osbuild-composer-worker'] is defined
+        - name: Check that osbuild-composer-worker is installed
+          ansible.builtin.assert:
+            that:
+              - ansible_facts.packages['osbuild-composer-worker'] is defined
 
-    - name: Check status of osbuild remote worker service
-      ansible.builtin.systemd:
-        name: "{{ osbuild_worker_remote_worker_service_name }}"
-      register: osbuild_remote_worker_service
+        - name: Check status of osbuild remote worker service
+          ansible.builtin.systemd:
+            name: "{{ osbuild_worker_remote_worker_service_name }}"
+          register: osbuild_remote_worker_service
 
-    - name: Check that osbuild remote worker service is enabled and started
-      ansible.builtin.assert:
-        that:
-          - osbuild_remote_worker_service.status['LoadState'] == 'loaded'
-          - osbuild_remote_worker_service.status['ActiveState'] == 'active'
-          - osbuild_remote_worker_service.status['UnitFileState'] == 'enabled'
+        - name: Check that osbuild remote worker service is enabled and started
+          ansible.builtin.assert:
+            that:
+              - osbuild_remote_worker_service.status['LoadState'] == 'loaded'
+              - osbuild_remote_worker_service.status['ActiveState'] == 'active'
+              - osbuild_remote_worker_service.status['UnitFileState'] == 'enabled'
 
-    - name: Stat the systemd drop-in configuration file
-      ansible.builtin.stat:
-        path: "{{ test_systemd_dropin_file }}"
-      register: test_systemd_dropin_file_stat
+        - name: Stat the systemd drop-in configuration file
+          ansible.builtin.stat:
+            path: "{{ test_systemd_dropin_file }}"
+          register: test_systemd_dropin_file_stat
 
-    - name: Check the systemd drop-in configuration file
-      ansible.builtin.assert:
-        that:
-          - test_systemd_dropin_file_stat.stat.exists
-          - test_systemd_dropin_file_stat.stat.isreg
-          - test_systemd_dropin_file_stat.stat.mode == test_systemd_dropin_file_mode
+        - name: Check the systemd drop-in configuration file
+          ansible.builtin.assert:
+            that:
+              - test_systemd_dropin_file_stat.stat.exists
+              - test_systemd_dropin_file_stat.stat.isreg
+              - test_systemd_dropin_file_stat.stat.mode == test_systemd_dropin_file_mode
 
-    - name: Register the content of the systemd drop-in configuration
-      ansible.builtin.slurp:
-        src: "{{ test_systemd_dropin_file }}"
-      register: test_systemd_dropin_file_content
+        - name: Register the content of the systemd drop-in configuration
+          ansible.builtin.slurp:
+            src: "{{ test_systemd_dropin_file }}"
+          register: test_systemd_dropin_file_content
 
-    - name: Check the content of the systemd drop-in configuration
-      ansible.builtin.assert:
-        that:
-          - unit_http_settings in test_systemd_dropin_file_content_raw
-          - unit_https_settings in test_systemd_dropin_file_content_raw
-          - unit_no_proxy_settings in test_systemd_dropin_file_content_raw
-      vars:
-        test_systemd_dropin_file_content_raw: "{{ test_systemd_dropin_file_content.content | b64decode }}"
-        unit_http_settings: "Environment=\"http_proxy={{ test_proxy_server }}:{{ test_proxy_port }}\""
-        unit_https_settings: "Environment=\"https_proxy={{ test_proxy_server }}:{{ test_proxy_port }}\""
-        unit_no_proxy_settings: "Environment=\"no_proxy={{ test_proxy_no_proxy_domains | join(',') }}\""
+        - name: Check the content of the systemd drop-in configuration
+          ansible.builtin.assert:
+            that:
+              - unit_http_settings in test_systemd_dropin_file_content_raw
+              - unit_https_settings in test_systemd_dropin_file_content_raw
+              - unit_no_proxy_settings in test_systemd_dropin_file_content_raw
+          vars:
+            test_systemd_dropin_file_content_raw: "{{ test_systemd_dropin_file_content.content | b64decode }}"
+            unit_http_settings: "Environment=\"http_proxy={{ test_proxy_server }}:{{ test_proxy_port }}\""
+            unit_https_settings: "Environment=\"https_proxy={{ test_proxy_server }}:{{ test_proxy_port }}\""
+            unit_no_proxy_settings: "Environment=\"no_proxy={{ test_proxy_no_proxy_domains | join(',') }}\""
 
-    - name: Check that the drop-in configuration is used by the osbuild remote worker service
-      ansible.builtin.assert:
-        that:
-          - test_systemd_dropin_file in osbuild_remote_worker_service.status['DropInPaths']
+        - name: Check that the drop-in configuration is used by the osbuild remote worker service
+          ansible.builtin.assert:
+            that:
+              - test_systemd_dropin_file in osbuild_remote_worker_service.status['DropInPaths']
+      rescue:
+        - name: Retrieve logs on failure
+          ansible.builtin.shell: |
+            {% raw %}
+            journalctl
+            {% endraw %}
+          changed_when: false
+          register: logfile_cmd
+
+        - name: Display logs
+          ansible.builtin.fail:
+            msg: |
+              {{ logfile_cmd.stdout }}
+              {{ logfile_cmd.stderr }}

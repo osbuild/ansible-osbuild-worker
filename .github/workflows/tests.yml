@@ -69,26 +69,11 @@ jobs:
       - name: install dependencies
         # need to pick specific version of ansible-compat due to
         # https://github.com/ansible-community/molecule/issues/3903
-        run: |
-          dnf install -y podman \
-            rsync \
-            which \
-            python3-click-help-colors \
-            python3-rich \
-            python3-enrich \
-            python3-pluggy \
-            python3-cookiecutter \
-            python3-pip
-          pip install molecule molecule-podman ansible
+        run: scripts/install_test_host_fedora_deps.sh
 
       - name: change podman storage driver
         # this is needed as here actually podman is running inside docker (the GH-action)
-        run: |
-          sudo mkdir -p /etc/containers
-          echo -e "[storage]\ndriver = \"vfs\"
-          runroot = \"/run/containers/storage\"
-          graphroot = \"/var/lib/containers/storage\"
-          " | sudo tee -a /etc/containers/storage.conf
+        run: scripts/create_storage_conf.sh
 
       - name: run molecule
         run: |

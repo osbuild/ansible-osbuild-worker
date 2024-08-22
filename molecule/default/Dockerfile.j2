@@ -16,7 +16,7 @@ ENV {{ var }} {{ value }}
 
 ENV container=docker
 
-RUN dnf -y install systemd sudo && dnf clean all && \
+RUN dnf -y install systemd sudo {{ item.additional_packages }} && dnf clean all && \
     systemctl mask systemd-remount-fs.service \
                    dev-hugepages.mount \
                    sys-fs-fuse-connections.mount \

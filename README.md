@@ -211,6 +211,16 @@ More useful example could be an instance of a remote worker configured with the 
 * Configuring the TLS client certificate authentication.
 * Configuring the osbuild-composer server TLS CA certificate.
 
+## Tests
+
+There are automated tests in the `.github` folder. To run them locally
+before creating a PR you can run
+
+`make tests`
+
+it is expected that `make` and `docker` is installed.
+Those test replicate a subset of the github tests as close as possible to see problems.
+
 ## License
 
 Apache-2.0

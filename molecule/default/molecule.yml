@@ -12,6 +12,7 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     pre_build_image: false
     privileged: true
+    additional_packages: "${additional_packages:-''}"
 provisioner:
   name: ansible
 verifier:

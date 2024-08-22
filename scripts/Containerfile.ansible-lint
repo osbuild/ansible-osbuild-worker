@@ -1,0 +1,9 @@
+# replicates environment of .github/workflows/tests.yml as close as possible
+ARG ANSIBLE_LINT_HOST_CONTAINER_NAMESPACE=quay.io/fedora
+ARG ANSIBLE_LINT_HOST_CONTAINER_NAME=fedora
+ARG ANSIBLE_LINT_HOST_CONTAINER_TAG=latest
+FROM ${ANSIBLE_LINT_HOST_CONTAINER_NAMESPACE}/${ANSIBLE_LINT_HOST_CONTAINER_NAME}:${ANSIBLE_LINT_HOST_CONTAINER_TAG}
+
+WORKDIR /app
+
+RUN dnf -y install ansible-lint
