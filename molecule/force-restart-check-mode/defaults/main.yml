@@ -1,6 +1,6 @@
 ---
 # common variables for force-restart test
-test_osbuild_worker_server_hostname: "composer.example.com"
-test_osbuild_worker_authentication_oauth_url: "https://oauth.example.com"
-test_osbuild_worker_authentication_client_id: "test-client"
-test_osbuild_worker_authentication_client_secret_file: "client_secret"
+test_osbuild_worker_server_hostname: composer.example.com
+test_osbuild_worker_authentication_oauth_url: https://oauth.example.com
+test_osbuild_worker_authentication_client_id: test-client
+test_osbuild_worker_authentication_client_secret_file: client_secret

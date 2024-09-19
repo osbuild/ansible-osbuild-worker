@@ -4,7 +4,7 @@
   gather_facts: true
   become: true
   vars:
-    osbuild_worker_remote_worker_service_name: "osbuild-remote-worker@{{ test_osbuild_worker_server_hostname }}.service"
+    osbuild_worker_remote_worker_service_name: osbuild-remote-worker@{{ test_osbuild_worker_server_hostname }}.service
 
   tasks:
     - name: Run tests and capture failure logs
@@ -20,14 +20,13 @@
 
         - name: Count how many times osbuild remote worker service was started
           ansible.builtin.set_fact:
-            osbuild_remote_worker_service_starts: "{{ osbuild_remote_worker_service_journal.stdout_lines | \
-              select('search', 'Started ') | list | count }}"
+            osbuild_remote_worker_service_starts: "{{ osbuild_remote_worker_service_journal.stdout_lines | select('search', 'Started ') | list | count }}"
 
         - name: Check that osbuild remote worker service was restarted
           ansible.builtin.assert:
             that:
               - osbuild_remote_worker_service_starts | int == 2
-            fail_msg: "osbuild remote worker service was not restarted"
+            fail_msg: osbuild remote worker service was not restarted
       rescue:
         - name: Retrieve logs on failure
           ansible.builtin.shell: |
@@ -39,6 +38,6 @@
 
         - name: Display logs
           ansible.builtin.fail:
-            msg: |
+            msg: |-
               {{ logfile_cmd.stdout }}
               {{ logfile_cmd.stderr }}

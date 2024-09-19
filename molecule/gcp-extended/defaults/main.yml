@@ -1,10 +1,10 @@
 ---
 # common variables for defaults test
-test_osbuild_worker_server_hostname: "composer.example.com"
-test_osbuild_worker_authentication_oauth_url: "https://oauth.example.com"
-test_osbuild_worker_authentication_client_id: "test-client"
-test_osbuild_worker_authentication_client_secret_file: "client_secret"
+test_osbuild_worker_server_hostname: composer.example.com
+test_osbuild_worker_authentication_oauth_url: https://oauth.example.com
+test_osbuild_worker_authentication_client_id: test-client
+test_osbuild_worker_authentication_client_secret_file: client_secret
 
-test_osbuild_worker_gcp_credentials_file: "gcp_credentials"
-test_osbuild_worker_gcp_credentials_path: "/etc/osbuild-worker/custom-gcp-credentials-path"
-test_osbuild_worker_gcp_bucket: "gcp-bucket-name"
+test_osbuild_worker_gcp_credentials_file: gcp_credentials
+test_osbuild_worker_gcp_credentials_path: /etc/osbuild-worker/custom-gcp-credentials-path
+test_osbuild_worker_gcp_bucket: gcp-bucket-name

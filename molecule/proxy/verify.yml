@@ -4,12 +4,11 @@
   gather_facts: true
   become: true
   vars:
-    osbuild_worker_remote_worker_service_template_name: "osbuild-remote-worker@"
-    osbuild_worker_remote_worker_service_name:
-      "{{ osbuild_worker_remote_worker_service_template_name }}{{ test_osbuild_worker_server_hostname }}.service"
+    osbuild_worker_remote_worker_service_template_name: osbuild-remote-worker@
+    osbuild_worker_remote_worker_service_name: "{{ osbuild_worker_remote_worker_service_template_name }}{{ test_osbuild_worker_server_hostname }}.service"
     test_systemd_dropin_dir: /etc/systemd/system/{{ osbuild_worker_remote_worker_service_template_name }}.service.d
     test_systemd_dropin_file: "{{ test_systemd_dropin_dir }}/proxy.conf"
-    test_systemd_dropin_file_mode: '0644'
+    test_systemd_dropin_file_mode: "0644"
 
   tasks:
     - name: Run tests and capture failure logs
@@ -64,9 +63,9 @@
               - unit_no_proxy_settings in test_systemd_dropin_file_content_raw
           vars:
             test_systemd_dropin_file_content_raw: "{{ test_systemd_dropin_file_content.content | b64decode }}"
-            unit_http_settings: "Environment=\"http_proxy={{ test_proxy_server }}:{{ test_proxy_port }}\""
-            unit_https_settings: "Environment=\"https_proxy={{ test_proxy_server }}:{{ test_proxy_port }}\""
-            unit_no_proxy_settings: "Environment=\"no_proxy={{ test_proxy_no_proxy_domains | join(',') }}\""
+            unit_http_settings: Environment="http_proxy={{ test_proxy_server }}:{{ test_proxy_port }}"
+            unit_https_settings: Environment="https_proxy={{ test_proxy_server }}:{{ test_proxy_port }}"
+            unit_no_proxy_settings: Environment="no_proxy={{ test_proxy_no_proxy_domains | join(',') }}"
 
         - name: Check that the drop-in configuration is used by the osbuild remote worker service
           ansible.builtin.assert:
@@ -83,6 +82,6 @@
 
         - name: Display logs
           ansible.builtin.fail:
-            msg: |
+            msg: |-
               {{ logfile_cmd.stdout }}
               {{ logfile_cmd.stderr }}

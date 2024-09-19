@@ -5,11 +5,11 @@
   become: true
   vars:
     osbuild_worker_config_dir: /etc/osbuild-worker
-    osbuild_worker_config_dir_mode: '0755'
+    osbuild_worker_config_dir_mode: "0755"
     osbuild_worker_config_file: "{{ osbuild_worker_config_dir }}/osbuild-worker.toml"
-    osbuild_worker_config_file_mode: '0644'
-    osbuild_worker_remote_worker_service_name: "osbuild-remote-worker@{{ test_osbuild_worker_server_hostname }}.service"
-    osbuild_worker_secrets_mode: '0400'
+    osbuild_worker_config_file_mode: "0644"
+    osbuild_worker_remote_worker_service_name: osbuild-remote-worker@{{ test_osbuild_worker_server_hostname }}.service
+    osbuild_worker_secrets_mode: "0400"
 
   tasks:
     - name: Run tests and capture failure logs
@@ -75,15 +75,13 @@
 
         - name: Count how many times osbuild remote worker service was started
           ansible.builtin.set_fact:
-            osbuild_remote_worker_service_starts: "{{ osbuild_remote_worker_service_journal.stdout_lines | \
-              select('search', 'Started ') | list | count }}"
+            osbuild_remote_worker_service_starts: "{{ osbuild_remote_worker_service_journal.stdout_lines | select('search', 'Started ') | list | count }}"
 
         - name: Check that osbuild remote worker service started only once
           ansible.builtin.assert:
             that:
               - osbuild_remote_worker_service_starts | int == 1
-            fail_msg: "osbuild remote worker service was started {{ osbuild_remote_worker_service_starts }} times
-              but it should be started only once"
+            fail_msg: osbuild remote worker service was started {{ osbuild_remote_worker_service_starts }} times but it should be started only once
 
         - name: Fetch the content of osbuild worker config file (Base64 encoded)
           ansible.builtin.slurp:

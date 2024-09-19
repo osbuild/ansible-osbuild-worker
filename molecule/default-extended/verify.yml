@@ -5,11 +5,11 @@
   become: true
   vars:
     osbuild_worker_config_dir: /etc/osbuild-worker
-    osbuild_worker_config_dir_mode: '0755'
+    osbuild_worker_config_dir_mode: "0755"
     osbuild_worker_config_file: "{{ osbuild_worker_config_dir }}/osbuild-worker.toml"
-    osbuild_worker_config_file_mode: '0644'
-    osbuild_worker_remote_worker_service_name: "osbuild-remote-worker@{{ test_osbuild_worker_server_hostname }}.service"
-    osbuild_worker_secrets_mode: '0400'
+    osbuild_worker_config_file_mode: "0644"
+    osbuild_worker_remote_worker_service_name: osbuild-remote-worker@{{ test_osbuild_worker_server_hostname }}.service
+    osbuild_worker_secrets_mode: "0400"
 
   tasks:
     - name: Run tests and capture failure logs
@@ -84,7 +84,7 @@
             auth_config_part: |-
               base_path = "{{ test_osbuild_worker_base_path }}"
               deployment_channel = "{{ test_worker_deployment_channel }}"
-    
+
               [authentication]
               oauth_url = "{{ test_osbuild_worker_authentication_oauth_url }}"
               client_id = "{{ test_osbuild_worker_authentication_client_id }}"
@@ -125,6 +125,6 @@
 
         - name: Display logs
           ansible.builtin.fail:
-            msg: |
+            msg: |-
               {{ logfile_cmd.stdout }}
               {{ logfile_cmd.stderr }}

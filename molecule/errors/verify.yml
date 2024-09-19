@@ -38,6 +38,6 @@
 
         - name: Display logs
           ansible.builtin.fail:
-            msg: |
+            msg: |-
               {{ logfile_cmd.stdout }}
               {{ logfile_cmd.stderr }}

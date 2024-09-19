@@ -1,12 +1,12 @@
 ---
 # common variables for proxy test
-test_osbuild_worker_server_hostname: "composer.example.com"
-test_osbuild_worker_authentication_oauth_url: "https://oauth.example.com"
-test_osbuild_worker_authentication_client_id: "test-client"
-test_osbuild_worker_authentication_client_secret_file: "client_secret"
+test_osbuild_worker_server_hostname: composer.example.com
+test_osbuild_worker_authentication_oauth_url: https://oauth.example.com
+test_osbuild_worker_authentication_client_id: test-client
+test_osbuild_worker_authentication_client_secret_file: client_secret
 
-test_proxy_server: "proxy.example.com"
+test_proxy_server: proxy.example.com
 test_proxy_port: "3128"
 test_proxy_no_proxy_domains:
-  - "domain.example.com"
-  - "domain2.example.com"
+  - domain.example.com
+  - domain2.example.com

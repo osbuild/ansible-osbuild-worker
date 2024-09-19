@@ -17,7 +17,6 @@ osbuild_worker_force_restart: false
 osbuild_worker_proxy_server_hostname: ""
 osbuild_worker_proxy_server_port: 443
 osbuild_worker_no_proxy_domains: []
-
 # Logging configuration
 # additional information to be logged where the instance is deployed
 # you should override with "staging", "production" or similar

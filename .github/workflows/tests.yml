@@ -1,3 +1,4 @@
+---
 name: Tests
 
 on:
@@ -16,13 +17,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          path: "${{ github.repository }}"
+          path: ${{ github.repository }}
 
       - name: Run ansible-lint
         # https://github.com/ansible/ansible-lint-action/issues/178
         uses: ansible-community/ansible-lint-action@v6.16.0
         with:
-          path: "${{ github.repository }}"
+          path: ${{ github.repository }}
 
   test:
     needs:
@@ -32,12 +33,12 @@ jobs:
       fail-fast: false
       matrix:
         image:
-          - name: "centos"
-            namespace: "quay.io/centos"
-            tag: "stream9"
-          - name: "fedora"
-            namespace: "quay.io/fedora"
-            tag: "latest"
+          - name: centos
+            namespace: quay.io/centos
+            tag: stream9
+          - name: fedora
+            namespace: quay.io/fedora
+            tag: latest
         scenario:
           - aws
           - aws-extended
@@ -54,17 +55,17 @@ jobs:
           - proxy
           - restart-on-config-change
     container:
-      image: "quay.io/fedora/fedora:latest"
+      image: quay.io/fedora/fedora:latest
       # --cgroupns=host needed due to https://github.com/containers/podman/discussions/12898#discussioncomment-4078154
-      options: "--privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host"
+      options: --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:rw --cgroupns=host
       env:
-        HOME: "/root"
+        HOME: /root
 
     steps:
       - name: checkout
         uses: actions/checkout@v3
         with:
-          path: "${{ github.repository }}"
+          path: ${{ github.repository }}
 
       - name: install dependencies
         # need to pick specific version of ansible-compat due to
@@ -85,4 +86,4 @@ jobs:
           export ANSIBLE_FORCE_COLOR=1
           export MOLECULE_NO_LOG="false"
           molecule test -d podman -s "${{ matrix.scenario }}"
-        working-directory: "${{ github.repository }}"
+        working-directory: ${{ github.repository }}

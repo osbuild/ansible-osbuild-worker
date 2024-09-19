@@ -52,13 +52,13 @@
       ansible.builtin.file:
         path: "{{ osbuild_worker_remote_worker_service_dropin_dir }}"
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Configure osbuild-remote-worker to use proxy using drop-in
       ansible.builtin.template:
         src: templates/osbuild-remote-worker-proxy.conf.j2
         dest: "{{ osbuild_worker_remote_worker_service_proxy_dropin_file }}"
-        mode: '0644'
+        mode: "0644"
       notify: Restart remote worker
 
 - name: Copy osbuild-worker configuration file
@@ -77,8 +77,11 @@
 
     - name: Filter any unwanted osbuild-remote-worker services
       ansible.builtin.set_fact:
-        osbuild_remote_worker_services_unwanted: "{{ ansible_facts.services | list | select('regex', '^osbuild-remote-worker@.+.service$')
-          | difference([_osbuild_remote_worker_service_wanted]) }}"
+        osbuild_remote_worker_services_unwanted: >-
+          {{ ansible_facts.services | list
+             | select('regex', '^osbuild-remote-worker@.+.service$')
+             | difference([_osbuild_remote_worker_service_wanted])
+          }}
       vars:
         _osbuild_remote_worker_service_wanted: "{{ osbuild_worker_remote_worker_service_name }}{{ osbuild_worker_server_hostname }}.service"
 
@@ -91,7 +94,7 @@
 
 - name: Notify remote worker restart handler on force restart
   ansible.builtin.debug:
-    msg: "Notifying remote worker restart handler"
+    msg: Notifying remote worker restart handler
   changed_when: osbuild_worker_force_restart
   notify: Restart remote worker
   when: osbuild_worker_force_restart
