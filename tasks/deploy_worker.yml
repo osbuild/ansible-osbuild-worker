@@ -5,7 +5,7 @@
   ansible.builtin.dnf:
     name:
       - osbuild-composer-worker
-    state: installed
+    state: present
     update_cache: true
 
 - name: Create worker configuration directory
