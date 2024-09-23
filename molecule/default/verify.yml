@@ -25,6 +25,11 @@
         that:
           - ansible_facts.packages['osbuild-composer-worker'] is defined
 
+    - name: Show osbuild-composer-worker package details
+      changed_when: false
+      ansible.builtin.debug:
+        msg: "{{ ansible_facts.packages['osbuild-composer-worker'] }}"
+
     - name: Stat osbuild_worker_config_dir
       ansible.builtin.stat:
         path: "{{ osbuild_worker_config_dir }}"
