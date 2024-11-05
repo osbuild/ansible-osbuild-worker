@@ -70,15 +70,8 @@
       ansible.builtin.set_fact:
         osbuild_worker_config_file_content: "{{ osbuild_worker_config_file_content_encoded.content | b64decode }}"
 
-    - name: Check the worker config file
-      ansible.builtin.assert:
-        that:
-          - auth_config_part in osbuild_worker_config_file_content
-          - osbuild_worker_config_file_content is not match(".*\[aws\].*")
-          - osbuild_worker_config_file_content is not match(".*\[azure\].*")
-          - osbuild_worker_config_file_content is not match(".*\[gcp\].*")
-          - osbuild_worker_config_file_content is not match(".*\[koji.+\].*")
-      vars:
+    - name: Register expected config part as variable
+      ansible.builtin.set_fact:
         auth_config_part: |-
           base_path = "{{ test_osbuild_worker_base_path }}"
           deployment_channel = "{{ test_worker_deployment_channel }}"
@@ -88,6 +81,15 @@
           client_id = "{{ test_osbuild_worker_authentication_client_id }}"
           client_secret = "{{ test_osbuild_worker_authentication_client_secret_path }}"
           offline_token = "{{ test_osbuild_worker_authentication_offline_token_path }}"
+
+    - name: Check the worker config file
+      ansible.builtin.assert:
+        that:
+          - auth_config_part in osbuild_worker_config_file_content
+          - osbuild_worker_config_file_content is not match(".*\[aws\].*")
+          - osbuild_worker_config_file_content is not match(".*\[azure\].*")
+          - osbuild_worker_config_file_content is not match(".*\[gcp\].*")
+          - osbuild_worker_config_file_content is not match(".*\[koji.+\].*")
 
     - name: Stat client_secret file
       ansible.builtin.stat:
