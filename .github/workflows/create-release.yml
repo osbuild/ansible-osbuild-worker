@@ -1,9 +1,10 @@
-name: "Create GitHub release"
+---
+name: Create GitHub release
 
 on:
   push:
     tags:
-      - "v*"
+      - v*
 
 jobs:
   release:
@@ -12,5 +13,5 @@ jobs:
       - name: Upstream release
         uses: osbuild/release-action@main
         with:
-          token: "${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}"
-          slack_webhook_url: "${{ secrets.SLACK_WEBHOOK_URL }}"
+          token: ${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,0 +1,15 @@
+# replicates environment of .github/workflows/tests.yml as close as possible
+ARG MOLECULE_HOST_CONTAINER_NAMESPACE=quay.io/fedora
+ARG MOLECULE_HOST_CONTAINER_NAME=fedora
+ARG MOLECULE_HOST_CONTAINER_TAG=latest
+FROM ${MOLECULE_HOST_CONTAINER_NAMESPACE}/${MOLECULE_HOST_CONTAINER_NAME}:${MOLECULE_HOST_CONTAINER_TAG}
+
+WORKDIR /app
+
+RUN mkdir -p /app/.ansible/roles
+
+COPY scripts/*.sh /
+RUN chmod a+x /*.sh
+
+RUN /install_test_host_fedora_deps.sh
+RUN /create_storage_conf.sh

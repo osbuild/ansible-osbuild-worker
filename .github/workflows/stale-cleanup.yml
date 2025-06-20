@@ -1,8 +1,9 @@
+---
 name: Mark and close stale issues and PRs
 
 on:
   schedule:
-    - cron: '0 4 * * *'
+    - cron: 0 4 * * *
 
 jobs:
   stale:

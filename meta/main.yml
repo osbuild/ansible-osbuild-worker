@@ -1,3 +1,4 @@
+---
 galaxy_info:
   role_name: osbuild_worker
   namespace: osbuild
@@ -16,8 +17,8 @@ galaxy_info:
         - "8"
         - "9"
   galaxy_tags:
-    - "osbuild"
-    - "composer"
-    - "worker"
+    - osbuild
+    - composer
+    - worker
 
 dependencies: []

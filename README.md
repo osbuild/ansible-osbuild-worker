@@ -37,6 +37,12 @@ osbuild_worker_proxy_server_hostname: ""
 osbuild_worker_proxy_server_port: 443
 osbuild_worker_no_proxy_domains: []
 
+# Logging configuration
+# additional information to be logged where the instance is deployed
+# you should override with "staging", "production" or similar
+# defaults to {{ osbuild_worker_deployment_channel_default }}
+osbuild_worker_deployment_channel: ""
+
 ################################################
 # Worker authentication to the composer server #
 ################################################
@@ -204,6 +210,16 @@ More useful example could be an instance of a remote worker configured with the 
 * Configuring the proxy server in the worker configuration.
 * Configuring the TLS client certificate authentication.
 * Configuring the osbuild-composer server TLS CA certificate.
+
+## Tests
+
+There are automated tests in the `.github` folder. To run them locally
+before creating a PR you can run
+
+`make tests`
+
+it is expected that `make` and `docker` is installed.
+Those test replicate a subset of the github tests as close as possible to see problems.
 
 ## License
 

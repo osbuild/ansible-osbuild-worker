@@ -9,7 +9,7 @@
         that:
           - osbuild_worker_server_hostname is defined
           - osbuild_worker_server_hostname | length > 0
-        fail_msg: "osbuild_worker_server_hostname must be set"
+        fail_msg: osbuild_worker_server_hostname must be set
 
     - name: Check that osbuild_worker_authentication_oauth_url is set
       ansible.builtin.assert:
@@ -17,7 +17,7 @@
         that:
           - osbuild_worker_authentication_oauth_url is defined
           - osbuild_worker_authentication_oauth_url | length > 0
-        fail_msg: "osbuild_worker_authentication_oauth_url must be set"
+        fail_msg: osbuild_worker_authentication_oauth_url must be set
 
     - name: Check that osbuild_worker_authentication_client_id is set
       ansible.builtin.assert:
@@ -25,19 +25,25 @@
         that:
           - osbuild_worker_authentication_client_id is defined
           - osbuild_worker_authentication_client_id | length > 0
-        fail_msg: "osbuild_worker_authentication_client_id must be set"
+        fail_msg: osbuild_worker_authentication_client_id must be set
 
     - name: Check that at least one of osbuild_worker_authentication_client_secret_file or osbuild_worker_authentication_offline_token_file is set
       ansible.builtin.assert:
         quiet: true
         that:
           - is_client_secret_file_defined or is_offline_token_file_defined
-        fail_msg: "At least one of osbuild_worker_authentication_client_secret_file and osbuild_worker_authentication_offline_token_file must be set"
+        fail_msg: At least one of osbuild_worker_authentication_client_secret_file and osbuild_worker_authentication_offline_token_file must be set
       vars:
-        is_client_secret_file_defined:
-          "{{ osbuild_worker_authentication_client_secret_file is defined and osbuild_worker_authentication_client_secret_file | length > 0 }}"
-        is_offline_token_file_defined:
-          "{{ osbuild_worker_authentication_offline_token_file is defined and osbuild_worker_authentication_offline_token_file | length > 0 }}"
+        is_client_secret_file_defined: >-
+          {{ osbuild_worker_authentication_client_secret_file is defined
+             and osbuild_worker_authentication_client_secret_file
+             | length > 0
+          }}
+        is_offline_token_file_defined: >-
+          {{ osbuild_worker_authentication_offline_token_file is defined
+             and osbuild_worker_authentication_offline_token_file
+             | length > 0
+          }}
 
 - name: Check optional variables
   block:
@@ -47,7 +53,7 @@
         that:
           - osbuild_worker_authentication_client_secret_file is defined
           - osbuild_worker_authentication_client_secret_file | length > 0
-        fail_msg: "osbuild_worker_authentication_client_secret_file must be set if osbuild_worker_authentication_client_secret_path is set"
+        fail_msg: osbuild_worker_authentication_client_secret_file must be set if osbuild_worker_authentication_client_secret_path is set
       when: osbuild_worker_authentication_client_secret_path | length > 0
 
     - name: Check that osbuild_worker_authentication_offline_token_file is set if osbuild_worker_authentication_offline_token_path is set
@@ -56,7 +62,7 @@
         that:
           - osbuild_worker_authentication_offline_token_file is defined
           - osbuild_worker_authentication_offline_token_file | length > 0
-        fail_msg: "osbuild_worker_authentication_offline_token_file must be set if osbuild_worker_authentication_offline_token_path is set"
+        fail_msg: osbuild_worker_authentication_offline_token_file must be set if osbuild_worker_authentication_offline_token_path is set
       when: osbuild_worker_authentication_offline_token_path | length > 0
 
     - name: Check Koji variables
@@ -92,8 +98,9 @@
             that:
               - osbuild_worker_azure_credentials_path | length == 0
               - osbuild_worker_azure_upload_threads == 0
-            fail_msg: "osbuild_worker_azure_credentials_path and osbuild_worker_azure_upload_threads must not be set
-              if osbuild_worker_azure_credentials_file is not set"
+            fail_msg: >-
+              osbuild_worker_azure_credentials_path and osbuild_worker_azure_upload_threads must not be set
+              if osbuild_worker_azure_credentials_file is not set
           when: osbuild_worker_azure_credentials_file | length == 0
 
         - name: Check that osbuild_worker_azure_upload_threads is a positive integer
@@ -101,7 +108,7 @@
             quiet: true
             that:
               - osbuild_worker_azure_upload_threads | int > 0
-            fail_msg: "osbuild_worker_azure_upload_threads must be a positive integer"
+            fail_msg: osbuild_worker_azure_upload_threads must be a positive integer
           when: osbuild_worker_azure_upload_threads != 0
 
     - name: Check that no AWS variables are set if osbuild_worker_aws_credentials_file is not set
@@ -110,7 +117,7 @@
         that:
           - osbuild_worker_aws_credentials_path | length == 0
           - osbuild_worker_aws_bucket | length == 0
-        fail_msg: "osbuild_worker_aws_credentials_path and osbuild_worker_aws_bucket must not be set if osbuild_worker_aws_credentials_file is not set"
+        fail_msg: osbuild_worker_aws_credentials_path and osbuild_worker_aws_bucket must not be set if osbuild_worker_aws_credentials_file is not set
       when: osbuild_worker_aws_credentials_file | length == 0
 
     - name: Check that no GCP variables are set if osbuild_worker_gcp_credentials_file is not set
@@ -119,5 +126,5 @@
         that:
           - osbuild_worker_gcp_credentials_path | length == 0
           - osbuild_worker_gcp_bucket | length == 0
-        fail_msg: "osbuild_worker_gcp_credentials_path and osbuild_worker_gcp_bucket must not be set if osbuild_worker_gcp_credentials_file is not set"
+        fail_msg: osbuild_worker_gcp_credentials_path and osbuild_worker_gcp_bucket must not be set if osbuild_worker_gcp_credentials_file is not set
       when: osbuild_worker_gcp_credentials_file | length == 0

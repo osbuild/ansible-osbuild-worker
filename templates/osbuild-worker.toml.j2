@@ -2,8 +2,11 @@
 
 {% if osbuild_worker_server_api_base_path %}
 base_path = "{{ osbuild_worker_server_api_base_path }}"
-
 {% endif %}
+{% if osbuild_worker_deployment_channel %}
+deployment_channel = "{{ osbuild_worker_deployment_channel }}"
+{% endif %}
+
 [authentication]
 oauth_url = "{{ osbuild_worker_authentication_oauth_url }}"
 client_id = "{{ osbuild_worker_authentication_client_id }}"

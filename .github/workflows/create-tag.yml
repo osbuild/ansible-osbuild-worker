@@ -1,8 +1,8 @@
-name: "Create and push release tag"
+---
+name: Create and push release tag
 
 on:
   workflow_dispatch:
-
 jobs:
   tag-and-push:
     runs-on: ubuntu-latest
@@ -11,7 +11,7 @@ jobs:
       - name: Upstream tag
         uses: osbuild/release-action@create-tag
         with:
-          token: "${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}"
-          username: "imagebuilder-bot"
-          email: "imagebuilder-bots+imagebuilder-bot@redhat.com"
+          token: ${{ secrets.SCHUTZBOT_GITHUB_ACCESS_TOKEN }}
+          username: imagebuilder-bot
+          email: imagebuilder-bots+imagebuilder-bot@redhat.com
           semver: "true"

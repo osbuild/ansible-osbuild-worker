@@ -1,16 +1,16 @@
 ---
 # common variables for koji test
-test_osbuild_worker_server_hostname: "composer.example.com"
-test_osbuild_worker_authentication_oauth_url: "https://oauth.example.com"
-test_osbuild_worker_authentication_client_id: "test-client"
-test_osbuild_worker_authentication_client_secret_file: "client_secret"
+test_osbuild_worker_server_hostname: composer.example.com
+test_osbuild_worker_authentication_oauth_url: https://oauth.example.com
+test_osbuild_worker_authentication_client_id: test-client
+test_osbuild_worker_authentication_client_secret_file: client_secret
 
 test_osbuild_worker_koji_instances:
-  - koji_host: "koji-1.example.com"
-    krb_principal: "test-automation1@EXAMPLE.COM"
-    krb_keytab_file: "koji-1.keytab"
+  - koji_host: koji-1.example.com
+    krb_principal: test-automation1@EXAMPLE.COM
+    krb_keytab_file: koji-1.keytab
     relax_timeout_factor: 5
-  - koji_host: "koji-2.example.com"
-    krb_principal: "test-automation2@EXAMPLE.COM"
-    krb_keytab_file: "koji-2.keytab"
-    krb_keytab_path: "/etc/osbuild-worker/koji-2.keytab"
+  - koji_host: koji-2.example.com
+    krb_principal: test-automation2@EXAMPLE.COM
+    krb_keytab_file: koji-2.keytab
+    krb_keytab_path: /etc/osbuild-worker/koji-2.keytab

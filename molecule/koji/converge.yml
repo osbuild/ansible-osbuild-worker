@@ -9,7 +9,7 @@
 
     - name: Include ansible-osbuild-worker role
       ansible.builtin.include_role:
-        name: "ansible-osbuild-worker"
+        name: ansible-osbuild-worker
       vars:
         osbuild_worker_server_hostname: "{{ test_osbuild_worker_server_hostname }}"
         osbuild_worker_authentication_oauth_url: "{{ test_osbuild_worker_authentication_oauth_url }}"
