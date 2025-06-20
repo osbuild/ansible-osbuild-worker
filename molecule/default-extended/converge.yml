@@ -19,3 +19,4 @@
         osbuild_worker_authentication_client_secret_path: "{{ test_osbuild_worker_authentication_client_secret_path }}"
         osbuild_worker_authentication_offline_token_file: "{{ test_osbuild_worker_authentication_offline_token_file }}"
         osbuild_worker_authentication_offline_token_path: "{{ test_osbuild_worker_authentication_offline_token_path }}"
+        osbuild_worker_deployment_channel: "{{ test_osbuild_worker_deployment_channel }}"

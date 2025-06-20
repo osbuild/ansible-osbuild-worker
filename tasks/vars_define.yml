@@ -34,3 +34,8 @@
       ternary(osbuild_worker_config_dir + '/client_' + item.koji_host + '.keytab', item.krb_keytab_path) }}"
     _item: "{{ item | combine({'krb_keytab_path': _krb_keytab_path}) }}"
   loop: "{{ osbuild_worker_koji_instances }}"
+
+- name: Set deployment channel if not defined
+  ansible.builtin.set_fact:
+    osbuild_worker_deployment_channel: "{{ osbuild_worker_deployment_channel_default }}"
+  when: osbuild_worker_deployment_channel | length == 0

@@ -21,3 +21,5 @@ osbuild_worker_authentication_offline_token_path_default: "{{ osbuild_worker_con
 osbuild_worker_azure_credentials_path_default: "{{ osbuild_worker_config_dir }}/azure-credentials"
 osbuild_worker_aws_credentials_path_default: "{{ osbuild_worker_config_dir }}/aws-credentials"
 osbuild_worker_gcp_credentials_path_default: "{{ osbuild_worker_config_dir }}/gcp-credentials"
+
+osbuild_worker_deployment_channel_default: "local"
